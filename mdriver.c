@@ -26,7 +26,7 @@
  **********************/
 
 /* Misc */
-#define MAXLINE     1024 /* max string size */
+#define MAXLINE     1024 /* max string size 1024 => 2048*/
 #define HDRLINES       4 /* number of header lines in a trace file */
 #define LINENUM(i) (i+5) /* cnvt trace request nums to linenums (origin 1) */
 
