@@ -105,7 +105,7 @@ static void change(void *bp)
     루트 => 나 => 루트's 이전 다음을 연결시키기
     (내가 둘 사이에 비집고 들어가는 것)
 */
-/*
+
 static void connect_root(void *bp) {
 // <1>  내 안에 양 root와 root의 이전다음놈 정보를 저장
     PUT(SUCC_LOC(bp), SUCC(heap_listp));
@@ -118,8 +118,8 @@ static void connect_root(void *bp) {
     }
     PUT_ADDRESS(SUCC_LOC(PRED(bp)), bp);
 }
-*/
 
+/*
 static void connect_root(void *bp)
 {
 
@@ -137,6 +137,7 @@ static void connect_root(void *bp)
     PUT_ADDRESS(SUCC_LOC(heap_listp), bp);
 
 }
+*/
 
 static void *coalesce(void *bp)
 {   
@@ -189,6 +190,8 @@ static void *coalesce(void *bp)
         PUT(FTRP(bp), PACK(size, 0));
         PUT(HDRP(PREV_BLKP(bp)), PACK(size, 0));
         bp = PREV_BLKP(bp);
+
+        
         /*
         // ※ 간선 정보가 덮어씌워지면 안되므로 <3>을 먼저 진행함
         PUT(PRED_LOC(SUCC(bp)), PRED(bp));
@@ -254,8 +257,9 @@ static void *coalesce(void *bp)
        connect_root(bp);
 
     }
-    //왜 필요??
+    
     return bp;
+    //왜 필요??
     // 만약 할당이 꽉차게 됐다면 NULL을 반환하는데 
     // extend_heap에서 coalesce함수 자체를 리턴하기 때문
     // mm_malloc에서 extend_heap의 반환값을 보고 heap이 더이상 커질 수 있는지 판별한다.
@@ -279,8 +283,6 @@ static void *extend_heap(size_t words)
     PUT(HDRP(bp), PACK(size, 0));         /* Free block header */
     PUT(FTRP(bp), PACK(size, 0));         /* Free block footer */
     PUT(HDRP(NEXT_BLKP(bp)), PACK(0, 1)); /* New epilogue header */
-    //printf("%d\n",size);
-    //printf("%p\n", bp);
     /* Coalesce if the previous block was free */
     return coalesce(bp);
 }
@@ -306,13 +308,11 @@ int mm_init(void)
     /* root PRED */
     return 0;
 }
-/* 
- * mm_malloc - Allocate a block by incrementing the brk pointer.
- *     Always allocate a block whose size is a multiple of the alignment.
- */
+
 static void *find_fit(size_t asize)
 {
     char *bp;
+    //아래 for 문에서 종료조건 : 
             // SUCC(bp)가 NULL인지 판단하고 NULL을 리턴해버리면
             // bp는 free공간이기 때문에 free인 공간인데도 더이상 남은공간이 없다고 return해버리는것!
             // 따라서 bp가 NULL인지 물어봐야 한다.
@@ -377,7 +377,10 @@ static void place(void *bp, size_t asize)
         PUT(FTRP(bp), PACK(old_size, 1));
     }
 }
-
+/* 
+ * mm_malloc - Allocate a block by incrementing the brk pointer.
+ *     Always allocate a block whose size is a multiple of the alignment.
+ */
 void *mm_malloc(size_t size)
 {
     size_t asize;      /* Adjusted block size */
